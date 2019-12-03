@@ -32,21 +32,23 @@ namespace ssdProject.Controllers
             return Ok(result);
         }
         
-        [HttpGet("prevision")]
-        public async Task<IActionResult> prevision()
+        [HttpPost("prevision")]
+        public async Task<IActionResult> prevision([FromBody] List<String> customers)
         {
-            var list = new List<String>();
-
-            for (int i = 1; i < 10; i++)
-            {
-                list.Add("cust" + new Random().Next(50));
-            }
-
             var result = await "http://localhost:7000/api/prevision"
                 .PostJsonAsync(new
                 {
-                    customers = list
+                    customers
                 }).ReceiveString();
+
+            return Ok(result);
+        }
+        
+        [HttpGet("prevision/{customer}")]
+        public async Task<IActionResult> prevision(string customer)
+        {
+            var result = await ("http://localhost:7000/api/prevision/" + customer)
+                .GetStringAsync();
 
             return Ok(result);
         }
