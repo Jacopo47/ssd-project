@@ -25,3 +25,11 @@ di previsione / ML sui dati. Il server principale contatterà le API fornite da 
 Per eseguire il progetto su Linux è possibile usare lo script:
 
 > ./runFlask.sh
+
+
+
+
+
+Scopo del progetto è prendere uno dei clienti del DB, ogni cliente ha 48 ordini. 
+Di questi 48 ordini dobbiamo considerarne 45 come TS, e facciamo la previsione degli ultimi 3. 
+Gli ultimi 3 rimasti li usiamo come Test set.
