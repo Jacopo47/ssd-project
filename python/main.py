@@ -25,7 +25,12 @@ def hello(name):
 
 @app.route("/api/prevision", methods=['POST'])
 def prevision():
-    customers = ','.join("'{0}'".format(w) for w in request.get_json()['customers'])
+    input_customers = request.get_json()['customers']
+
+    if len(input_customers) == 0:
+        return 'Customers not defined', 400
+
+    customers = ','.join("'{0}'".format(w) for w in input_customers)
 
     return chartOrders.get_prevision_as_image(path_to_directory, path_to_sqlite, customers)
 
