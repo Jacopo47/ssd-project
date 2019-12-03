@@ -2,9 +2,9 @@ import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import BarChartIcon from '@material-ui/icons/BarChart';
+import FunctionsIcon from '@material-ui/icons/Functions';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import TimelineIcon from '@material-ui/icons/Timeline';
 
 export const ListItemKeys = {
     counter: 'counter',
@@ -16,19 +16,19 @@ export const mainListItems = (onButtonClicked) => (
     <div>
         <ListItem button onClick={() => onButtonClicked(ListItemKeys.counter)}>
             <ListItemIcon>
-                <DashboardIcon />
+                <FunctionsIcon />
             </ListItemIcon>
             <ListItemText primary="Counter" />
         </ListItem>
         <ListItem button onClick={() => onButtonClicked(ListItemKeys.fetchData)}>
             <ListItemIcon>
-                <ShoppingCartIcon />
+                <SupervisorAccountIcon />
             </ListItemIcon>
             <ListItemText primary="Fetch Data" />
         </ListItem>
         <ListItem button onClick={() => onButtonClicked(ListItemKeys.prevision)}>
             <ListItemIcon>
-                <BarChartIcon />
+                <TimelineIcon />
             </ListItemIcon>
             <ListItemText primary="Prevision" />
         </ListItem>
