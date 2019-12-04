@@ -3,13 +3,12 @@ import os
 import sys
 import pandas as pd
 import numpy as np
+from flask import jsonify
 from sqlalchemy import create_engine
 import common
 
 import pmdarima as pm
-import matplotlib.pyplot as plt
 
-plt.rcParams.update({'figure.figsize': (6, 4), 'figure.dpi': 120})
 
 
 # ---------------------------- read from sqlite database
@@ -45,6 +44,9 @@ def forecast_accuracy(forecast, actual):
 
 
 def get_arima_prediction_as_image(path_to_sqlite, customer):
+    import matplotlib.pyplot as plt
+
+    plt.rcParams.update({'figure.figsize': (6, 4), 'figure.dpi': 120})
     # read time series into dataframe df
     # df = pd.read_csv('customer12.csv', header=0, names = ['cust12'], index_col=0)
 
@@ -75,8 +77,10 @@ def get_arima_prediction_as_image(path_to_sqlite, customer):
     metrics = forecast_accuracy(forecasts, df.quant[-n_forecast - 1:-1])
     print("MAPE = {:.2f}".format(metrics['mape']))
 
+    result_forecasts = []
     for i in range(0, n_forecast):
         print("Actual {:.2f} forecast {:.2f}".format(test[len(train) + i], forecasts[i]))
+        result_forecasts.append(forecasts[i])
 
     # make series for plotting purpose
     fitted_series = pd.Series(forecasts, index=index_forecasts)
@@ -95,8 +99,13 @@ def get_arima_prediction_as_image(path_to_sqlite, customer):
     plt.title("SARIMA - Final Forecast of {}".format(customer))
     # plt.show()
 
+    # last_forecast = forecasts[n_forecast - 1]
     # Finally, print the chart as base64 string to the console.
-    return common.print_figure(plt.gcf())
+    # return common.print_figure(plt.gcf())
+    return jsonify(
+        forecasts=result_forecasts,
+        image=common.print_figure(plt.gcf()).decode('utf-8')
+    )
 
 
 class CustomerNotFound(Exception):

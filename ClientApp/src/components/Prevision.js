@@ -167,7 +167,13 @@ class Prevision extends Component {
                 }
 
                 response.json().then(data => {
-                    this.setState({imageAsString: data, loading: false})
+                    const lastValues = data.forecasts;
+                    let counter = 1;
+                    lastValues.forEach(e => {
+                        this.props.enqueueSnackbar(counter + '^ forecast value -> ' + e.toFixed(2));
+                        counter++;
+                    });
+                    this.setState({imageAsString: data.image, loading: false})
                 }).catch(err => {
                     this.handleFetchDataFail(err.message)
                 })

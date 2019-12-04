@@ -48,7 +48,7 @@ namespace ssdProject.Controllers
         public async Task<IActionResult> prevision(string customer)
         {
             var result = await ("http://localhost:7000/api/prevision/" + customer)
-                .GetStringAsync();
+                .GetJsonAsync();
 
             return Ok(result);
         }
