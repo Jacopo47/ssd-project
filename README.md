@@ -29,6 +29,7 @@ Per eseguire il progetto su Linux è possibile usare lo script:
 
 
 
+### Project goal
 
 Scopo del progetto è prendere uno dei clienti del DB, ogni cliente ha 48 ordini. 
 Di questi 48 ordini dobbiamo considerarne 45 come TS, e facciamo la previsione degli ultimi 3. 
