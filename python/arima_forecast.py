@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 import common
 
 import pmdarima as pm
-
+import matplotlib.pyplot as plt
 
 
 # ---------------------------- read from sqlite database
@@ -17,12 +17,12 @@ def load_orders(db, cust):
 
     engine = create_engine('sqlite:///' + db)
 
-    df_allorders = pd.read_sql(sql, engine, index_col='time')
+    df_all_orders = pd.read_sql(sql, engine, index_col='time')
 
-    if df_allorders.size == 0:
+    if df_all_orders.size == 0:
         raise CustomerNotFound()
 
-    return df_allorders
+    return df_all_orders
 
 
 # ------------------------------ Accuracy metrics
@@ -44,8 +44,7 @@ def forecast_accuracy(forecast, actual):
 
 
 def get_arima_prediction_as_image(path_to_sqlite, customer):
-    import matplotlib.pyplot as plt
-
+    plt.figure()
     plt.rcParams.update({'figure.figsize': (6, 4), 'figure.dpi': 120})
     # read time series into dataframe df
     # df = pd.read_csv('customer12.csv', header=0, names = ['cust12'], index_col=0)
@@ -88,23 +87,25 @@ def get_arima_prediction_as_image(path_to_sqlite, customer):
     upper_series = pd.Series(confint[:, 1], index=index_forecasts)
 
     # Plot
-    plt.plot(df)
-    plt.plot(yhat, color='brown')
-    plt.plot(fitted_series, color='darkgreen')
+    plt.plot(df, label='Training Data')
+    plt.plot(yhat, color='brown', label='Predicted values')
+    plt.plot(fitted_series, color='darkgreen', label='Forecast')
     plt.fill_between(lower_series.index,
                      lower_series,
                      upper_series,
                      color='k', alpha=.15)
 
     plt.title("SARIMA - Final Forecast of {}".format(customer))
+    plt.legend()
     # plt.show()
 
     # last_forecast = forecasts[n_forecast - 1]
     # Finally, print the chart as base64 string to the console.
     # return common.print_figure(plt.gcf())
     return jsonify(
+        metrics=metrics,
         forecasts=result_forecasts,
-        image=common.print_figure(plt.gcf()).decode('utf-8')
+        image=common.get_figure(plt.gcf()).decode('utf-8')
     )
 
 

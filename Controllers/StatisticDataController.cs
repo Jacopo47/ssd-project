@@ -33,7 +33,7 @@ namespace ssdProject.Controllers
         }
         
         [HttpPost("prevision")]
-        public async Task<IActionResult> prevision([FromBody] List<String> customers)
+        public async Task<IActionResult> prevision([FromBody] List<string> customers)
         {
             var result = await "http://localhost:7000/api/prevision"
                 .PostJsonAsync(new
@@ -44,10 +44,28 @@ namespace ssdProject.Controllers
             return Ok(result);
         }
         
-        [HttpGet("prevision/{customer}")]
-        public async Task<IActionResult> prevision(string customer)
+        [HttpGet("prevision/{customer}/arima")]
+        public async Task<IActionResult> previsionArima(string customer)
         {
-            var result = await ("http://localhost:7000/api/prevision/" + customer)
+            var result = await ("http://localhost:7000/api/prevision/" + customer + "/arima")
+                .GetJsonAsync();
+
+            return Ok(result);
+        }
+        
+        [HttpGet("prevision/{customer}/sarimax")]
+        public async Task<IActionResult> previsionSarimax(string customer)
+        {
+            var result = await ("http://localhost:7000/api/prevision/" + customer + "/sarimax")
+                .GetJsonAsync();
+
+            return Ok(result);
+        }
+        
+        [HttpGet("prevision/{customer}/ml")]
+        public async Task<IActionResult> previsionLstmNeuralNetwork(string customer)
+        {
+            var result = await ("http://localhost:7000/api/prevision/" + customer + "/ml")
                 .GetJsonAsync();
 
             return Ok(result);
@@ -58,10 +76,10 @@ namespace ssdProject.Controllers
 
     public class Response
     {
-        public String msg;
+        public string Msg;
 
-        public Response(String msg) {
-            this.msg = msg;
+        public Response(string msg) {
+            this.Msg = msg;
         }
     }
 

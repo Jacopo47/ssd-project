@@ -5,11 +5,15 @@ import ListItemText from '@material-ui/core/ListItemText';
 import FunctionsIcon from '@material-ui/icons/Functions';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import TimelineIcon from '@material-ui/icons/Timeline';
+import TrackChangesIcon from '@material-ui/icons/TrackChanges';
+
+
 
 export const ListItemKeys = {
     counter: 'counter',
     fetchData: 'fetch-data',
-    prevision: 'prevision'
+    prevision: 'prevision',
+    optimize: 'optimize'
 };
 
 export const mainListItems = (onButtonClicked) => (
@@ -31,6 +35,12 @@ export const mainListItems = (onButtonClicked) => (
                 <TimelineIcon />
             </ListItemIcon>
             <ListItemText primary="Prevision" />
+        </ListItem>
+        <ListItem button onClick={() => onButtonClicked(ListItemKeys.optimize)}>
+            <ListItemIcon>
+                <TrackChangesIcon />
+            </ListItemIcon>
+            <ListItemText primary="Optimize" />
         </ListItem>
     </div>
 );

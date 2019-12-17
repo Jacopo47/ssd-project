@@ -4,8 +4,26 @@ Common functions and a colormap for the line charts.
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-from sqlalchemy import create_engine
+import base64
+import io
+
 import pandas as pd
+import numpy as np
+from sqlalchemy import create_engine
+
+
+# ---------------------------- read from sqlite database
+def load_orders(db, cust):
+    sql = "SELECT time, quant FROM ordini WHERE customer IN ({})".format(cust)
+
+    engine = create_engine('sqlite:///' + db)
+
+    df_all_orders = pd.read_sql(sql, engine, index_col='time')
+
+    if df_all_orders.size == 0:
+        raise CustomerNotFound()
+
+    return df_all_orders
 
 
 def load_stock_data(db, tickers, start_date, end_date):
@@ -35,18 +53,36 @@ def load_stock_data(db, tickers, start_date, end_date):
     return result
 
 
-def load_orders(db, customers):
+# ------------------------------ Accuracy metrics
+def forecast_accuracy(forecast, actual):
+    mape = np.mean(np.abs(forecast - actual) / np.abs(actual))  # MAPE
+    me = np.mean(forecast - actual)  # ME
+    mae = np.mean(np.abs(forecast - actual))  # MAE
+    mpe = np.mean((forecast - actual) / actual)  # MPE
+    rmse = np.mean((forecast - actual) ** 2) ** .5  # RMSE
+    corr = np.corrcoef(forecast, actual)[0, 1]  # corr
+    mins = np.amin(np.hstack([forecast[:, None],
+                              actual[:, None]]), axis=1)
+    maxs = np.amax(np.hstack([forecast[:, None],
+                              actual[:, None]]), axis=1)
+    minmax = 1 - np.mean(mins / maxs)  # minmax
+    return ({'mape': mape, 'me': me, 'mae': mae,
+             'mpe': mpe, 'rmse': rmse,
+             'corr': corr, 'minmax': minmax})
+
+
+def get_orders(db, customers):
     SQL = "SELECT * FROM ordini WHERE customer IN ({})" \
         .format(customers)
 
     engine = create_engine('sqlite:///' + db)
 
-    df_allorders = pd.read_sql(SQL, engine, index_col='id')
+    df_all_orders = pd.read_sql(SQL, engine, index_col='id')
 
     result = []
 
     for cust in customers.split(","):
-        df_order = df_allorders.query("customer == " + cust)
+        df_order = df_all_orders.query("customer == " + cust)
         result.append(df_order)
 
     return result
@@ -54,10 +90,8 @@ def load_orders(db, customers):
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import io, sys, base64
 
-
-def print_figure(fig):
+def get_figure(fig):
     """
     Converts a figure (as created e.g. with matplotlib or seaborn) to a png image and this
     png subsequently to a base64-string, then prints the resulting string to the console.
@@ -79,4 +113,10 @@ COLOR_MAP = [
     'lime', 'cadetblue'
 ]
 
+
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+class CustomerNotFound(Exception):
+    """Base class for other exceptions"""
+    pass

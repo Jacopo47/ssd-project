@@ -20,6 +20,7 @@ import {ListItemKeys, mainListItems} from "./components/ListItem";
 import {Counter} from "./components/Counter";
 import {FetchData} from "./components/FetchData";
 import Prevision from "./components/Prevision";
+import Optimize from "./components/Optimize";
 
 const drawerWidth = 240;
 
@@ -163,6 +164,7 @@ export default function App() {
                             {displayed === ListItemKeys.fetchData ? <FetchData/> : null}
                             {displayed === ListItemKeys.counter ? <Counter/> : null}
                             {displayed === ListItemKeys.prevision ? <Prevision/> : null}
+                            {displayed === ListItemKeys.optimize ? <Optimize/> : null}
                         </Grid>
                     </Grid>
                 </Container>
