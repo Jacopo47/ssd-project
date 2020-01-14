@@ -9,7 +9,7 @@ class Order {
     public double quant;
 
 
-    private static string sqLiteConnectionString = @"Data Source=ordiniMI2018.sqlite; Version=3";
+    private static string sqLiteConnectionString = @"Data Source=ordiniMI2019.sqlite; Version=3";
 
 
     public Order(string id, string customer, string time, double quant) {

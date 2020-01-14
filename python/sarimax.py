@@ -45,3 +45,42 @@ def sarimax_forecast(path_to_sqlite, customer):
         forecasts=forecast,
         image=common.get_figure(plt.gcf()).decode('utf-8')
     )
+
+
+def prevision_for_optimizer(path_to_sqlite, customer):
+    plt.figure()
+    # Import data
+    df = common.load_orders(path_to_sqlite, "'" + customer + "'")
+
+    plt.title('Sarimax forecast - ' + customer, color='black')
+
+    n_forecast = 4
+
+    train = df.quant[0:-n_forecast]
+    test = df.quant[-n_forecast:]
+
+    ds = train
+    sarima_model = SARIMAX(ds, order=(0, 2, 2), seasonal_order=(0, 1, 0, 12))
+    sfit = sarima_model.fit()
+
+    forewrap = sfit.get_forecast(steps=n_forecast)
+    forecast_ci = forewrap.conf_int()
+    forecast_val = forewrap.predicted_mean
+    plt.plot(ds.values, label='Training set')
+    plt.plot(test, label='Test set', color='green')
+    plt.fill_between(forecast_ci.index,
+                     forecast_ci.iloc[:, 0],
+                     forecast_ci.iloc[:, 1], color='k', alpha=.25)
+
+    plt.plot(forecast_val, label='Forecast')
+    plt.xlabel('time')
+    plt.ylabel('sales')
+    plt.legend()
+
+    forecast_val = forecast_val.astype(int)
+
+    forecast = df.quant.tolist() + forecast_val.values.tolist()
+
+    return jsonify(
+        forecasts=forecast
+    )

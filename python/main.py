@@ -11,7 +11,7 @@ app = Flask(__name__)
 path_to_directory = './'
 path_to_sqlite = '../ordiniMI2019.sqlite'
 
-mlForecasting.model = mlForecasting.rnn_forecasting_model('../ordiniMI2018.sqlite', mlForecasting.scaler)
+mlForecasting.model = mlForecasting.rnn_forecasting_model(path_to_sqlite, mlForecasting.scaler)
 
 
 @app.route("/user/<name>")
@@ -59,5 +59,12 @@ def sarimax_prevision_on_customer(customer):
 def ml_forecasting_on_customer(customer):
     try:
         return mlForecasting.rnn_forecasting_predict(mlForecasting.model, mlForecasting.scaler, path_to_sqlite, customer)
+    except CustomerNotFound:
+        return "Customer not found", 404
+
+@app.route("/api/optimize/prevision/<customer>", methods=['GET'])
+def prevision_for_optimizer(customer):
+    try:
+        return sarimax.prevision_for_optimizer(path_to_sqlite, customer)
     except CustomerNotFound:
         return "Customer not found", 404
